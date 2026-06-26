@@ -1,3 +1,5 @@
+-- checkpoint  system of the game :)
+
 local Players = game:GetService("Players")
 local DataStoreService = game:GetService("DataStoreService")
 
@@ -92,3 +94,45 @@ Players.PlayerRemoving:Connect(function(player)
 	end
 
 end)
+
+
+-- finish System
+local finishFolder = workspace:WaitForChild("Finish")
+
+for _, finishPart in ipairs(finishFolder:GetChildren()) do
+
+	finishPart.Touched:Connect(function(hit)
+
+		local character = hit.Parent
+		local player = Players:GetPlayerFromCharacter(character)
+
+		if not player then
+			return
+		end
+
+		-- prevent multiple wins while standing on the finish
+		if finishPart:GetAttribute(player.UserId) then
+			return
+		end
+
+		finishPart:SetAttribute(player.UserId, true)
+
+		-- Give the player a win
+		player.leaderstats.Wins.Value += 1
+
+		-- Reset checkpoint
+		player.Checkpoint.Value = 0
+		player.leaderstats.Stage.Value = 0
+
+		print("🎉 YAY! " .. player.Name .. " WON THE OBBY!")
+
+		-- respawn at the start
+		player:LoadCharacter()
+
+		-- allow another win after 2 seconds
+		task.wait(2)
+		finishPart:SetAttribute(player.UserId, nil)
+
+	end)
+
+end
