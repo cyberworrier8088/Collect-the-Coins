@@ -40,6 +40,8 @@ for _, checkpointPart in ipairs(checkpointFolder:GetChildren()) do
 
 		if checkpointNumber and player.Checkpoint.Value < checkpointNumber then
 			player.Checkpoint.Value = checkpointNumber
+
+            checkpointPart.Color = Color3.fromRGB(0, 255, 0)
 			print(player.Name .. " reached checkpoint " .. checkpointNumber)
 		end
 
