@@ -1,9 +1,7 @@
 local Players = game:GetService("Players")
 
 local checkpointFolder = workspace:WaitForChild("Checkpoints")
-local checkpoint1 = checkpointFolder:WaitForChild("Checkpoint1")
 
--- craete a checkpint
 Players.PlayerAdded:Connect(function(player)
 
 	local checkpoint = Instance.new("IntValue")
@@ -11,34 +9,40 @@ Players.PlayerAdded:Connect(function(player)
 	checkpoint.Value = 0
 	checkpoint.Parent = player
 
-	-- checter spawn
 	player.CharacterAdded:Connect(function(character)
 
-		-- wait 
 		local root = character:WaitForChild("HumanoidRootPart")
 
-		-- if player reach in checkpoint check
-		if player.Checkpoint.Value == 1 then
-			root.CFrame = checkpoint1.CFrame + Vector3.new(0, 5, 0)
+		if checkpoint.Value > 0 then
+			local checkpointPart = checkpointFolder:FindFirstChild(tostring(checkpoint.Value))
+
+			if checkpointPart then
+				root.CFrame = checkpointPart.CFrame + Vector3.new(0, 5, 0)
+			end
 		end
 
 	end)
 
 end)
 
--- activate checkpoint1
-checkpoint1.Touched:Connect(function(hit)
+for _, checkpointPart in ipairs(checkpointFolder:GetChildren()) do
 
-	local character = hit.Parent
-	local player = Players:GetPlayerFromCharacter(character)
+	checkpointPart.Touched:Connect(function(hit)
 
-	if not player then
-		return
-	end
+		local character = hit.Parent
+		local player = Players:GetPlayerFromCharacter(character)
 
-	if player.Checkpoint.Value < 1 then
-		player.Checkpoint.Value = 1
-		print(player.Name .. "activated Checkpoint 1")
-	end
+		if not player then
+			return
+		end
 
-end)
+		local checkpointNumber = tonumber(checkpointPart.Name)
+
+		if checkpointNumber and player.Checkpoint.Value < checkpointNumber then
+			player.Checkpoint.Value = checkpointNumber
+			print(player.Name .. " reached checkpoint " .. checkpointNumber)
+		end
+
+	end)
+
+end
